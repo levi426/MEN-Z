@@ -6,6 +6,7 @@ from datetime import timedelta
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import dj_database_url
 
 # Load .env variables
 load_dotenv()
@@ -16,7 +17,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ['your-app-name.onrender.com', 'localhost', '127.0.0.1']
+
+# Allowed hosts (add your Render URL)
+ALLOWED_HOSTS = [
+    os.getenv('ALLOWED_HOST', 'localhost'),
+    '127.0.0.1'
+]
 
 # Custom user model
 AUTH_USER_MODEL = 'users.User'
@@ -52,12 +58,11 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
-# CORS
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = False  # Safer for production
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    os.getenv('FRONTEND_URL', 'http://localhost:3000'),
 ]
 
 # Middleware
@@ -92,20 +97,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Database (Neon Postgres)
+# Database (Neon Postgres via DATABASE_URL)
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'neondb'),
-        'USER': os.getenv('DB_USER', 'neondb_owner'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', ''),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'OPTIONS': {
-            'sslmode': os.getenv('DB_SSLMODE', 'require'),  # Required for Neon
-        }
-    }
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
+    
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -121,13 +119,13 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # Collectstatic will put files here
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Collected by collectstatic
 
 # Media files (uploads)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'  # For development; consider Cloudinary/S3 for production
+MEDIA_ROOT = BASE_DIR / 'media'  # Optional: consider Cloud storage in prod
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
