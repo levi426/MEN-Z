@@ -23,7 +23,7 @@ function ProductDetail() {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const url = `http://localhost:8000/api/products/${id}/`;
+        const url = `'https://men-z.onrender.com'/api/products/${id}/`;
         const data = await apiClient.get(url);
         setProduct(data);
         console.debug('Product loaded:', data);
@@ -115,7 +115,7 @@ function ProductDetail() {
         <ProductReviews productId={id} reviews={product.reviews} />
         <AddReview productId={id} onReviewAdded={async () => {
           try {
-            const data = await apiClient.get(`http://localhost:8000/api/products/${id}/`);
+            const data = await apiClient.get(`https://men-z.onrender.com/api/products/${id}/`);
             setProduct(data);
           } catch {}
         }} />

@@ -52,7 +52,7 @@ function PaymentUploadPage() {
       // Payment model expects: order (FK to Order), screenshot (ImageField)
       // NOTE: Payment uses OneToOneField, so only ONE payment per order
       // Use fetch directly for FormData to avoid JSON stringification
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+      const API_BASE_URL = 'https://men-z.onrender.com'
       const token = localStorage.getItem('token')
 
       // Only upload the first file since Payment is OneToOne with Order

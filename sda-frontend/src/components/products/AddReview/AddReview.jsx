@@ -42,7 +42,7 @@ function AddReview({ productId, onReviewAdded }) {
         comment: comment.trim(),
       }
       
-      const res = await apiClient.post(`http://localhost:8000/api/products/${productId}/reviews/add/`, payload)
+      const res = await apiClient.post(`https://men-z.onrender.com/api/products/${productId}/reviews/add/`, payload)
       
       if (res && (res.id || res.success)) {
         setSuccess('Review submitted successfully!')

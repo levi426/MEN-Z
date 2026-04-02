@@ -25,7 +25,7 @@ function Home() {
         // First try fetching all products to test basic connectivity
         try {
           console.log('Testing basic connectivity - fetching all products...')
-          const allProducts = await apiClient.get('http://localhost:8000/api/products/')
+          const allProducts = await apiClient.get('https://men-z.onrender.com/api/products/')
           console.log('All products response:', allProducts)
         } catch (testErr) {
           console.error('Basic connectivity test failed:', testErr)
@@ -33,8 +33,8 @@ function Home() {
 
         // Fetch hero product (shalwar_kameez)
         try {
-          console.log('Fetching hero product from: http://localhost:8000/api/products/category/shalwar_kameez/')
-          const heroData = await apiClient.get('http://localhost:8000/api/products/category/shalwar_kameez/')
+          console.log('Fetching hero product from: https://men-z.onrender.com/api/products/category/shalwar_kameez/')
+          const heroData = await apiClient.get('https://men-z.onrender.com/api/products/category/shalwar_kameez/')
           console.log('Hero data response:', heroData)
           const heroList = Array.isArray(heroData) ? heroData : heroData.results || []
           console.log('Hero list:', heroList)
@@ -43,8 +43,8 @@ function Home() {
 
         for (let cat of cats) {
           try {
-            console.log(`Fetching ${cat} category from: http://localhost:8000/api/products/category/${cat}/`)
-            const data = await apiClient.get(`http://localhost:8000/api/products/category/${cat}/`)
+            console.log(`Fetching ${cat} category from: https://men-z.onrender.com/api/products/category/${cat}/`)
+            const data = await apiClient.get(`https://men-z.onrender.com/api/products/category/${cat}/`)
             console.log(`${cat} response:`, data)
             const list = Array.isArray(data) ? data : data.results || []
             console.log(`${cat} list:`, list)

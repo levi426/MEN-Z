@@ -20,7 +20,7 @@ function OrderHistory() {
         return
       }
 
-      const response = await fetch('http://localhost:8000/api/orders/history/', {
+      const response = await fetch('https://men-z.onrender.com/api/orders/history/', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

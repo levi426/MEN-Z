@@ -47,7 +47,7 @@ function Cart() {
   const fetchOrderStatus = async (orderId) => {
     try {
       setOrderLoading(true)
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+      const API_BASE_URL = 'https://men-z.onrender.com'
       const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/`)
       
       if (response.ok) {
@@ -63,7 +63,7 @@ function Cart() {
 
   const handleRemoveItem = async (itemId) => {
     try {
-      await apiClient.delete(`http://127.0.0.1:8000/api/cart/remove/${itemId}/`)
+      await apiClient.delete(`https://men-z.onrender.com/api/cart/remove/${itemId}/`)
       // Refresh cart
       const data = await apiClient.get(API_ENDPOINTS.CART.LIST)
       setCart(data)
@@ -80,7 +80,7 @@ function Cart() {
     }
 
     try {
-      await apiClient.put(`http://127.0.0.1:8000/api/cart/update/${itemId}/`, { quantity: newQuantity })
+      await apiClient.put(`https://men-z.onrender.com/api/cart/update/${itemId}/`, { quantity: newQuantity })
       const data = await apiClient.get(API_ENDPOINTS.CART.LIST)
       setCart(data)
     } catch (err) {

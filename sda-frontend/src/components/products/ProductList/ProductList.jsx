@@ -24,10 +24,10 @@ function ProductList() {
         let url
         if (category) {
           // Use category-specific endpoint: /api/products/category/{category}/
-          url = `http://localhost:8000/api/products/category/${category}/`
+          url = `https://men-z.onrender.com/api/products/category/${category}/`
         } else {
           // Use general list endpoint
-          url = API_ENDPOINTS.PRODUCTS.LIST
+          url = `https://men-z.onrender.com/api/products/`
         }
         
         console.log('Fetching from:', url)

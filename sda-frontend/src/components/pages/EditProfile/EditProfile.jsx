@@ -28,7 +28,7 @@ function EditProfile() {
         return
       }
 
-      const response = await fetch('http://localhost:8000/api/auth/profile/', {
+      const response = await fetch('https://men-z.onrender.com/api/auth/profile/', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -81,7 +81,7 @@ function EditProfile() {
         return
       }
 
-      const response = await fetch('http://localhost:8000/api/auth/profile/update/', {
+      const response = await fetch('https://men-z.onrender.com/api/auth/profile/update/', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

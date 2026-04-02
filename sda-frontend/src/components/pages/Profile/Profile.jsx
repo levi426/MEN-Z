@@ -26,7 +26,7 @@ function Profile() {
         return
       }
 
-      const response = await fetch('http://localhost:8000/api/auth/profile/', {
+      const response = await fetch('https://men-z.onrender.com/api/auth/profile/', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
