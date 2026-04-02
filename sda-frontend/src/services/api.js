@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+const API_BASE = 'https://men-z.onrender.com'
 
 export const API_ENDPOINTS = {
   AUTH: {
