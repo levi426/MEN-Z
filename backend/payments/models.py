@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-
+from cloudinary.models import CloudinaryField
 
 class Payment(models.Model):
     order = models.OneToOneField(
@@ -9,7 +9,7 @@ class Payment(models.Model):
         related_name='payment_record'   
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    screenshot = models.ImageField(upload_to='payments/')
+    image = CloudinaryField('image')  
     uploaded_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, default='pending')
 

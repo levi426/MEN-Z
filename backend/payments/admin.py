@@ -34,22 +34,22 @@ reject_payment.short_description = "✗ Reject selected payments"
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'order', 'user', 'status', 'uploaded_at', 'screenshot_preview', 'action_buttons')
+    list_display = ('id', 'order', 'user', 'status', 'uploaded_at', 'image_preview')
     list_filter = ('status', 'uploaded_at')
     search_fields = ('order__id', 'user__email', 'status')
-    readonly_fields = ('id', 'user', 'uploaded_at', 'screenshot_preview')
-    fields = ('id', 'order', 'user', 'screenshot', 'screenshot_preview', 'status', 'uploaded_at')
-    actions = [approve_payment, reject_payment]
+    readonly_fields = ('id', 'user', 'uploaded_at', 'image_preview')
 
-    def screenshot_preview(self, obj):
-        if obj.screenshot:
+    fields = ('id', 'order', 'user', 'image', 'image_preview', 'status', 'uploaded_at')
+
+    def image_preview(self, obj):
+        if obj.image:
             return format_html(
-                '<img src="{}" style="max-width: 300px; max-height: 300px;" />',
-                obj.screenshot.url
+                '<img src="{}" style="max-width:300px; max-height:300px;" />',
+                obj.image.url
             )
-        return 'No screenshot'
-    screenshot_preview.short_description = 'Screenshot Preview'
+        return "No image"
 
+    image_preview.short_description = "Image Preview"
     def action_buttons(self, obj):
         """Display approve/reject buttons inline"""
         approve_url = f"javascript:if(confirm('Approve this payment?')){{fetch('/api/payments/{obj.id}/approve/', {{method:'POST',headers:{{'Authorization':'Bearer '+localStorage.getItem('token')}}}}).then(()=>location.reload());}}"
