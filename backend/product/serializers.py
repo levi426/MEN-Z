@@ -21,6 +21,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class ClothingProductSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
 
     class Meta:
@@ -32,9 +33,14 @@ class ClothingProductSerializer(serializers.ModelSerializer):
             'price',
             'stock',
             'category',
-            'image',   # ✅ This will now return Cloudinary URL automatically
+            'image',
             'reviews'
         ]
+
+    def get_image(self, obj):
+        if obj.image:
+            return obj.image.url
+        return None
 
     def get_reviews(self, obj):
         reviews = Review.objects.filter(
@@ -44,5 +50,4 @@ class ClothingProductSerializer(serializers.ModelSerializer):
         return ReviewSerializer(reviews, many=True, context=self.context).data
 
 
-# Optional alias
 ProductSerializer = ClothingProductSerializer
