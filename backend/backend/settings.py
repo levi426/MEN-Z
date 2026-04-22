@@ -5,6 +5,7 @@ Django settings for backend project (Production Ready)
 from datetime import timedelta
 from pathlib import Path
 import os
+import cloudinary
 from dotenv import load_dotenv
 import dj_database_url
 
@@ -18,8 +19,9 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 # Allowed hosts
 ALLOWED_HOSTS = [
-    os.getenv('ALLOWED_HOST'),
+    os.getenv('ALLOWED_HOST', ''),
     '127.0.0.1',
+    'localhost',
 ]
 
 # Custom user model
@@ -44,6 +46,8 @@ INSTALLED_APPS = [
     'orders',
     'wishlist',
     'payments',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 # REST framework
@@ -52,7 +56,13 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
-
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # JWT
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
@@ -120,14 +130,15 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Static
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Media
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# # Media
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default PK
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
