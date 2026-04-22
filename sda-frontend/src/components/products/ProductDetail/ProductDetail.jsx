@@ -23,7 +23,7 @@ function ProductDetail() {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const url = `'https://men-z.onrender.com'/api/products/${id}/`;
+        const url = `https://men-z.onrender.com/api/products/${id}/`;
         const data = await apiClient.get(url);
         setProduct(data);
         console.debug('Product loaded:', data);
