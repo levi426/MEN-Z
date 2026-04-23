@@ -3,13 +3,15 @@ from .models import Payment
 
 
 class PaymentSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(required=True)
+
     class Meta:
         model = Payment
         fields = [
             'id',
             'order',
             'user',
-            'image',   # ✅ FIXED (was screenshot)
+            'image',
             'uploaded_at',
             'status'
         ]

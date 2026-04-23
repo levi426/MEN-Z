@@ -59,7 +59,7 @@ function PaymentUploadPage() {
       const file = files[0]
       const paymentFormData = new FormData()
       paymentFormData.append('order', orderId)
-      paymentFormData.append('screenshot', file)
+      paymentFormData.append('image', file)
 
       console.log('Uploading payment with order:', orderId, 'file:', file.name)
 
