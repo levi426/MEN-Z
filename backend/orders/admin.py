@@ -12,7 +12,54 @@ class OrderItemInline(admin.TabularInline):
     def get_subtotal(self, obj):
         return f"Rs {obj.calculate_subtotal():.2f}"
     get_subtotal.short_description = "Subtotal"
+def mark_as_paid(modeladmin, request, queryset):
+    for order in queryset:
+        order.status = 'paid'
+        order.track_order_status = 'payment received'
+        order.save(update_fields=['status', 'track_order_status'])
+    modeladmin.message_user(request, f"{queryset.count()} order(s) marked as PAID.")
 
+mark_as_paid.short_description = "Mark selected orders as Paid"
+
+
+def mark_as_processing(modeladmin, request, queryset):
+    for order in queryset:
+        order.status = 'processing'
+        order.track_order_status = 'processing'
+        order.save(update_fields=['status', 'track_order_status'])
+    modeladmin.message_user(request, f"{queryset.count()} order(s) marked as PROCESSING.")
+
+mark_as_processing.short_description = "Mark as Processing"
+
+
+def mark_as_shipped(modeladmin, request, queryset):
+    for order in queryset:
+        order.status = 'shipped'
+        order.track_order_status = 'shipped'
+        order.save(update_fields=['status', 'track_order_status'])
+    modeladmin.message_user(request, f"{queryset.count()} order(s) marked as SHIPPED.")
+
+mark_as_shipped.short_description = "Mark as Shipped"
+
+
+def mark_as_delivered(modeladmin, request, queryset):
+    for order in queryset:
+        order.status = 'delivered'
+        order.track_order_status = 'delivered'
+        order.save(update_fields=['status', 'track_order_status'])
+    modeladmin.message_user(request, f"{queryset.count()} order(s) marked as DELIVERED.")
+
+mark_as_delivered.short_description = "Mark as Delivered"
+
+
+def mark_as_cancelled(modeladmin, request, queryset):
+    for order in queryset:
+        order.status = 'cancelled'
+        order.track_order_status = 'cancelled'
+        order.save(update_fields=['status', 'track_order_status'])
+    modeladmin.message_user(request, f"{queryset.count()} order(s) marked as CANCELLED.")
+
+mark_as_cancelled.short_description = "Mark as Cancelled"
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_user_email', 'order_date', 'status', 'track_order_status', 'total_amount', 'get_item_count')
