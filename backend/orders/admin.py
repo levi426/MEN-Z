@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from .models import Order, OrderItem, RefundRequest
 
+
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     fields = ('product_name', 'price_at_purchase', 'quantity', 'get_subtotal')
@@ -12,13 +13,14 @@ class OrderItemInline(admin.TabularInline):
     def get_subtotal(self, obj):
         return f"Rs {obj.calculate_subtotal():.2f}"
     get_subtotal.short_description = "Subtotal"
+
+
 def mark_as_paid(modeladmin, request, queryset):
     for order in queryset:
         order.status = 'paid'
         order.track_order_status = 'payment received'
         order.save(update_fields=['status', 'track_order_status'])
     modeladmin.message_user(request, f"{queryset.count()} order(s) marked as PAID.")
-
 mark_as_paid.short_description = "Mark selected orders as Paid"
 
 
@@ -28,7 +30,6 @@ def mark_as_processing(modeladmin, request, queryset):
         order.track_order_status = 'processing'
         order.save(update_fields=['status', 'track_order_status'])
     modeladmin.message_user(request, f"{queryset.count()} order(s) marked as PROCESSING.")
-
 mark_as_processing.short_description = "Mark as Processing"
 
 
@@ -38,7 +39,6 @@ def mark_as_shipped(modeladmin, request, queryset):
         order.track_order_status = 'shipped'
         order.save(update_fields=['status', 'track_order_status'])
     modeladmin.message_user(request, f"{queryset.count()} order(s) marked as SHIPPED.")
-
 mark_as_shipped.short_description = "Mark as Shipped"
 
 
@@ -48,7 +48,6 @@ def mark_as_delivered(modeladmin, request, queryset):
         order.track_order_status = 'delivered'
         order.save(update_fields=['status', 'track_order_status'])
     modeladmin.message_user(request, f"{queryset.count()} order(s) marked as DELIVERED.")
-
 mark_as_delivered.short_description = "Mark as Delivered"
 
 
@@ -58,15 +57,17 @@ def mark_as_cancelled(modeladmin, request, queryset):
         order.track_order_status = 'cancelled'
         order.save(update_fields=['status', 'track_order_status'])
     modeladmin.message_user(request, f"{queryset.count()} order(s) marked as CANCELLED.")
-
 mark_as_cancelled.short_description = "Mark as Cancelled"
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_user_email', 'order_date', 'status', 'track_order_status', 'total_amount', 'get_item_count')
     list_filter = ('status', 'track_order_status', 'order_date')
     search_fields = ('user__email', 'user__username')
     inlines = [OrderItemInline]
-    readonly_fields = ('order_date', 'total_amount', 'get_order_items_summary', 'track_order_status')
+    readonly_fields = ('order_date', 'total_amount', 'get_order_items_summary')
+
     fieldsets = (
         ('Order Information', {
             'fields': ('user', 'order_date', 'status', 'track_order_status', 'total_amount', 'loyalty_points_earned')
@@ -80,6 +81,14 @@ class OrderAdmin(admin.ModelAdmin):
         }),
     )
 
+    actions = [
+        mark_as_paid,
+        mark_as_processing,
+        mark_as_shipped,
+        mark_as_delivered,
+        mark_as_cancelled
+    ]
+
     def get_user_email(self, obj):
         return obj.user.email
     get_user_email.short_description = "User Email"
@@ -92,17 +101,36 @@ class OrderAdmin(admin.ModelAdmin):
         items = obj.items.all()
         if not items:
             return "No items in this order"
-        
+
         html = '<table style="width:100%; border-collapse: collapse;">'
-        html += '<tr style="background-color: #f0f0f0; border: 1px solid #ddd;"><th style="padding: 8px; border: 1px solid #ddd;">Product</th><th style="padding: 8px; border: 1px solid #ddd;">Price</th><th style="padding: 8px; border: 1px solid #ddd;">Quantity</th><th style="padding: 8px; border: 1px solid #ddd;">Subtotal</th></tr>'
-        
+        html += '<tr style="background-color:#f0f0f0;border:1px solid #ddd;">'
+        html += '<th style="padding:8px;border:1px solid #ddd;">Product</th>'
+        html += '<th style="padding:8px;border:1px solid #ddd;">Price</th>'
+        html += '<th style="padding:8px;border:1px solid #ddd;">Quantity</th>'
+        html += '<th style="padding:8px;border:1px solid #ddd;">Subtotal</th></tr>'
+
         for item in items:
-            html += f'<tr style="border: 1px solid #ddd;"><td style="padding: 8px; border: 1px solid #ddd;">{item.product_name}</td><td style="padding: 8px; border: 1px solid #ddd;">Rs {item.price_at_purchase}</td><td style="padding: 8px; border: 1px solid #ddd;">{item.quantity}</td><td style="padding: 8px; border: 1px solid #ddd;">Rs {item.calculate_subtotal():.2f}</td></tr>'
-        
-        html += f'<tr style="background-color: #f0f0f0; border: 1px solid #ddd; font-weight: bold;"><td colspan="3" style="padding: 8px; border: 1px solid #ddd;">Total:</td><td style="padding: 8px; border: 1px solid #ddd;">Rs {obj.calculate_total():.2f}</td></tr>'
-        html += '</table>'
+            html += f'''
+            <tr style="border:1px solid #ddd;">
+                <td style="padding:8px;border:1px solid #ddd;">{item.product_name}</td>
+                <td style="padding:8px;border:1px solid #ddd;">Rs {item.price_at_purchase}</td>
+                <td style="padding:8px;border:1px solid #ddd;">{item.quantity}</td>
+                <td style="padding:8px;border:1px solid #ddd;">Rs {item.calculate_subtotal():.2f}</td>
+            </tr>
+            '''
+
+        html += f'''
+        <tr style="background-color:#f0f0f0;border:1px solid #ddd;font-weight:bold;">
+            <td colspan="3" style="padding:8px;border:1px solid #ddd;">Total:</td>
+            <td style="padding:8px;border:1px solid #ddd;">Rs {obj.calculate_total():.2f}</td>
+        </tr>
+        </table>
+        '''
+
         return mark_safe(html)
+
     get_order_items_summary.short_description = "Order Items"
+
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
@@ -114,6 +142,7 @@ class OrderItemAdmin(admin.ModelAdmin):
     def get_subtotal(self, obj):
         return f"Rs {obj.calculate_subtotal():.2f}"
     get_subtotal.short_description = "Subtotal"
+
 
 @admin.register(RefundRequest)
 class RefundRequestAdmin(admin.ModelAdmin):
@@ -129,35 +158,24 @@ class RefundRequestAdmin(admin.ModelAdmin):
     get_reason_preview.short_description = "Reason"
 
     def approve_refund(self, request, queryset):
-        """Action to approve selected refund requests"""
         for refund in queryset:
             if refund.status != 'approved':
                 refund.status = 'approved'
                 refund.save()
-                
-                
                 order = refund.order
                 order.status = 'refunded'
                 order.track_order_status = 'Order cancel and refunded'
                 order.save()
-                
                 payment = getattr(order, 'payment_record', None)
                 if payment:
-                    try:
-                        
-                        payment.status = 'refunded'
-                        payment.save()
-                    except Exception:
-                        
-                        pass
-        self.message_user(request, f"{queryset.count()} refund request(s) approved successfully. Order status updated to 'refunded'.")
-    approve_refund.short_description = "✓ Approve selected refund requests"
+                    payment.status = 'refunded'
+                    payment.save()
+        self.message_user(request, f"{queryset.count()} refund(s) approved.")
+    approve_refund.short_description = "✓ Approve refunds"
 
     def reject_refund(self, request, queryset):
-        """Action to reject selected refund requests"""
         for refund in queryset:
-            if refund.status != 'rejected':
-                refund.status = 'rejected'
-                refund.save()
-        self.message_user(request, f"{queryset.count()} refund request(s) rejected successfully.")
-    reject_refund.short_description = "✗ Reject selected refund requests"
+            refund.status = 'rejected'
+            refund.save()
+        self.message_user(request, f"{queryset.count()} refund(s) rejected.")
+    reject_refund.short_description = "✗ Reject refunds"
