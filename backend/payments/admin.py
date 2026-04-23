@@ -34,7 +34,7 @@ reject_payment.short_description = "✗ Reject selected payments"
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'order', 'user', 'status', 'uploaded_at', 'image_preview')
+    list_display = ('id', 'order', 'user', 'status', 'uploaded_at', 'image_preview', 'action_buttons')
     list_filter = ('status', 'uploaded_at')
     search_fields = ('order__id', 'user__email', 'status')
     readonly_fields = ('id', 'user', 'uploaded_at', 'image_preview')
